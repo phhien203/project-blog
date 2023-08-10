@@ -1,12 +1,11 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
-import dynamic from 'next/dynamic';
 
 import BlogHero from '@/components/BlogHero';
-import CodeSnippet from '@/components/CodeSnippet/CodeSnippet';
+import { BLOG_TITLE } from '@/constants';
 import { loadBlogPost } from '@/helpers/file-helpers';
+import { MDX_COMPONENTS_MAP } from '@/helpers/mdx-components';
 
 import styles from './postSlug.module.css';
-import { BLOG_TITLE } from '@/constants';
 
 export async function generateMetadata({ params }) {
   const { frontmatter } = await loadBlogPost(params.postSlug);
@@ -28,15 +27,7 @@ async function BlogPost({ params }) {
       />
 
       <div className={styles.page}>
-        <MDXRemote
-          source={content}
-          components={{
-            pre: CodeSnippet,
-            DivisionGroupsDemo: dynamic(() =>
-              import('@/components/DivisionGroupsDemo/DivisionGroupsDemo')
-            ),
-          }}
-        />
+        <MDXRemote source={content} components={MDX_COMPONENTS_MAP} />
       </div>
     </article>
   );
