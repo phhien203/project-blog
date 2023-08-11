@@ -1,4 +1,5 @@
 import { MDXRemote } from 'next-mdx-remote/rsc';
+import { notFound } from 'next/navigation';
 
 import BlogHero from '@/components/BlogHero';
 import { BLOG_TITLE } from '@/constants';
@@ -8,7 +9,13 @@ import { MDX_COMPONENTS_MAP } from '@/helpers/mdx-components';
 import styles from './postSlug.module.css';
 
 export async function generateMetadata({ params }) {
-  const { frontmatter } = await loadBlogPost(params.postSlug);
+  const blogPostData = await loadBlogPost(params.postSlug);
+
+  if (!blogPostData) {
+    return null;
+  }
+
+  const { frontmatter } = blogPostData;
 
   return {
     title: `${frontmatter.title} • ${BLOG_TITLE}`,
@@ -17,7 +24,13 @@ export async function generateMetadata({ params }) {
 }
 
 async function BlogPost({ params }) {
-  const { content, frontmatter } = await loadBlogPost(params.postSlug);
+  const blogPostData = await loadBlogPost(params.postSlug);
+
+  if (!blogPostData) {
+    return notFound();
+  }
+
+  const { content, frontmatter } = blogPostData;
 
   return (
     <article className={styles.wrapper}>
